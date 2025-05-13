@@ -1,26 +1,23 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
     Name = "Silly nooby hub",
-    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+    Icon = 0,
     LoadingTitle = "Silly nooby hub",
     LoadingSubtitle = "by Computer",
-    Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
+    Theme = "Default",
     DisableRayfieldPrompts = false,
-    DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-
+    DisableBuildWarnings = false,
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = nil, -- Create a custom folder for your hub/game
+        FolderName = nil,
         FileName = "ComputerHacker228"
     },
-
-    KeySystem = false, -- Set this to true to use our key system
+    KeySystem = false,
     KeySettings = {
         Title = "Untitled",
         Subtitle = "Key System",
         Note = "No method of obtaining the key is provided", 
-        FileName = "Key", -- e
+        FileName = "Key",
         SaveKey = true, 
         GrabKeyFromSite = false, 
         Key = {"Hello"} 
@@ -29,20 +26,20 @@ local Window = Rayfield:CreateWindow({
 
 local Tab = Window:CreateTab("Player", 4483362458)
 
+-- Fake Lag Variables
 local fakeLagEnabled = false
 local fakeLagThread
+local fakeLagValue = 0.1
 
-local Slider = Tab:CreateSlider({
-    Name = "Fake lag",
-    Range = {0.2, 0.10},
-    Increment = 1,
-    Suffix = "lag",
-    CurrentValue = 0.1,
-    Flag = "Slider1", 
-    Callback = function(Value)
+-- Fake Lag Toggle Button
+local FakeLagToggle = Tab:CreateButton({
+    Name = "Enable Fake Lag",
+    Callback = function()
         fakeLagEnabled = not fakeLagEnabled
         
         if fakeLagEnabled then
+            FakeLagToggle:Set("Disable Fake Lag")
+            
             fakeLagThread = task.spawn(function()
                 local lp = game:GetService("Players").LocalPlayer
                 
@@ -53,19 +50,21 @@ local Slider = Tab:CreateSlider({
                         local hrp = character:FindFirstChild("HumanoidRootPart")
                         if hrp then
                             hrp.Anchored = true
-                            task.wait(Value)
+                            task.wait(fakeLagValue)
                             hrp.Anchored = false
-                            task.wait(Value)
+                            task.wait(fakeLagValue)
                         end
                     end
                 end
             end)
         else
+            FakeLagToggle:Set("Enable Fake Lag")
+            
             if fakeLagThread then
                 task.cancel(fakeLagThread)
                 fakeLagThread = nil
                 
-                -- Make sure to unanchor if we're turning it off
+                -- Ensure HRP is unanchored when disabled
                 local lp = game:GetService("Players").LocalPlayer
                 local character = lp.Character
                 if character then
@@ -79,6 +78,20 @@ local Slider = Tab:CreateSlider({
     end
 })
 
+-- Fake Lag Slider
+local Slider = Tab:CreateSlider({
+    Name = "Fake Lag Duration",
+    Range = {0.05, 1},
+    Increment = 0.05,
+    Suffix = "seconds",
+    CurrentValue = fakeLagValue,
+    Flag = "FakeLagSlider",
+    Callback = function(Value)
+        fakeLagValue = Value
+    end
+})
+
+-- Touch to Fling Button
 local Button = Tab:CreateButton({
     Name = "Touch to fling",
     Callback = function()
