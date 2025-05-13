@@ -13,7 +13,7 @@ local Window = Rayfield:CreateWindow({
       Enabled = true,
       FolderName = nil, -- Create a custom folder for your hub/game
       FileName = "ComputerHacker228"
-   },
+   }
 
 
    KeySystem = false, -- Set this to true to use our key system
